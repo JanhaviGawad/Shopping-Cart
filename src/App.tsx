@@ -4,7 +4,16 @@ import { Badge, Box } from '@chakra-ui/react';
 import Cards from './components/Card/Card';
 import { Flex, Spacer } from '@chakra-ui/react';
 import Navbar from './components/Card/Navbar';
-
+import {
+  createBrowserRouter,
+  RouterProvider,
+  Route,
+  Link,
+  createRoutesFromElements
+} from "react-router-dom";
+import RootLayout from './layout/RootLayout';
+import MyOrder from './Pages/MyOrder';
+import PlaceOrder from './Pages/PlaceOrder';
 const App: React.FC = () => {
   const property = {
     imageUrl: 'https://bit.ly/2Z4KKcF',
@@ -16,21 +25,36 @@ const App: React.FC = () => {
     reviewCount: 34,
     rating: 4,
   };
+
+ const router  = createBrowserRouter(
+    createRoutesFromElements(
+      <Route path="/" element={<RootLayout />}>
+        <Route path="place" element={<PlaceOrder />} />
+        <Route
+          path="myorder"
+          element={<MyOrder />}
+          loader={({ request }) =>
+            fetch("/api/dashboard.json", {
+              signal: request.signal,
+            })
+          }
+        />
+        {/* <Route element={<AuthLayout />}>
+          <Route
+            path="login"
+            element={<Login />}
+            loader={redirectIfUser}
+          />
+          <Route path="logout" />
+        </Route> */}
+      </Route>
+    )
+  );
+  
   return (
-    <div className="App">
-      <Navbar />
-      <Box w="100%" p={4} color="white">
-        <Flex>
-          <Box p="4" >
-            <Cards/>
-          </Box>
-          <Spacer />
-          <Box p="4">
-          <Cards/>
-          </Box>
-        </Flex>
-      </Box>
-    </div>
+    
+      <RouterProvider router={router}/>
+     
   );
 };
 
